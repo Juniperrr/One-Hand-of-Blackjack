@@ -2,7 +2,7 @@ let showAllCards = false;
 const suits = ["S", "D", "C", "H"];
 const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 let deck = new Array();
-const players = new Array();
+let players = new Array();
 // let currentPlayer = 0;
 
 // Generate a deck of 52 unshuffled cards and assigning points.
@@ -31,6 +31,7 @@ function shuffle() {
 
 // Declare 2 players, who will get 2 cards assigned.
 function generatePlayers() {
+    players = new Array();
     const user = {
         name: 'user',
         points: 0,
@@ -44,7 +45,31 @@ function generatePlayers() {
     };
     players.push(computer);
 }
+function endGame(){
+    showAllCards = true;
+    document.querySelector('#bb').style.display = "none";
+    document.querySelector('#resetBlock').style.display = "block";
+}
 
+function startGame(){
+    showAllCards = false;
+    document.querySelector('#bb').style.display = "block";
+    document.querySelector('#resetBlock').style.display = "none";
+    document.querySelector('#resultTitle').textContent = "";
+}
+
+function checkBust() {
+    for (let p = 0; p < players.length; p++) {
+        if (players[p].points > 21) {
+            if (p === 0) {
+                document.querySelector('#resultTitle').textContent = "Player lost (bust)!";
+            } else {
+                document.querySelector('#resultTitle').textContent = "Computer lost (bust)!";
+            }
+            endGame();
+        }
+    }
+}
 function updateScores() {
     for (let p = 0; p < players.length; p++) {
         let numAces = 0;
@@ -69,9 +94,9 @@ function updateScores() {
                 sumScore += 10;
             }
         }
-        
         players[p].points = sumScore; // gives total score if a player has a hand or more.
     }
+    checkBust();
     document.querySelector('#userTitle').textContent = 'User Hand - total ' + players[0].points;
     let score = '?';
     if (showAllCards) {
@@ -108,24 +133,14 @@ function setImgAttribute(card, cardImg, what) {
     cardImg.style.height = "80px";
 }
 
-function checkBust() {
-    for (let p = 0; p < players.length; p++) {
-        if (players[p].points > 21) {
-            if (p === 0) {
-                document.querySelector('#resultTitle').textContent = "Player lost (bust)!";
-            } else {
-                document.querySelector('#resultTitle').textContent = "Computer lost (bust)!";
-            }
-            showAllCards = true;
-        }
-    }
-}
 
-function cardsDisplay(userCards, computerCards) {
-    updateScores();
-    checkBust();
+function cardsDisplay() {
+    const userCards = document.querySelector("#userCards");
+    const computerCards = document.querySelector("#computerCards");
+    
     userCards.innerHTML = "";
     computerCards.innerHTML = "";
+    updateScores();
     for (let p = 0; p < players.length; p++) {
         let card;
         let cardImg;
@@ -150,6 +165,7 @@ function cardsDisplay(userCards, computerCards) {
             cardDiv.appendChild(cardImg);
         }
     }
+    
 }
 
 // Display user name/scores, cards, hit/stand
@@ -175,7 +191,7 @@ function gameInterface (startValues) {
 	computerDiv.appendChild(computerCards);
 
     const hitBtn = document.createElement('button');
-	const standBtn = document.createElement('button');
+    const standBtn = document.createElement('button');
     const bottomBlock = document.createElement('div');
 	hitBtn.id='hitBtn';
 	standBtn.id='standBtn';
@@ -190,28 +206,36 @@ function gameInterface (startValues) {
     const resultTitle = document.createElement('h3');	
     resultTitle.id='resultTitle';
     resultBlock.appendChild(resultTitle);
+
+    const resetBlock = document.createElement('div');
+    resetBlock.id = 'resetBlock';
+    const resetBtn = document.createElement('button');	
+    resetBtn.id='resetBtn';
+    resetBtn.textContent = 'RESET';
     
+    resetBlock.appendChild(resetBtn);
+    resetBlock.style.display = "none";
+
     gameDiv.appendChild(userDiv);
     gameDiv.appendChild(computerDiv);
     gameDiv.appendChild(bottomBlock);
     gameDiv.appendChild(resultBlock);
+    gameDiv.appendChild(resetBlock);
     
     // firstR(c,p,cardList,pCards,cCards);
-    cardsDisplay(userCards, computerCards);
-    hitBtn.onclick = () => hit(deck, userCards, computerCards);
-	standBtn.onclick = () => stand(deck, userCards, computerCards);
-	// if(total(p,'p')===21){
-	// 	gameOver();
-	// }
+    cardsDisplay();
+    hitBtn.onclick = () => hit();
+    standBtn.onclick = () => stand();
+    resetBtn.onclick = () => reset();
 }
 
-function hit (deck, userCards, computerCards) {
+function hit () {
     const nextCard = deck.shift();
     players[0].hands.push(nextCard);
-    cardsDisplay(userCards, computerCards);
+    cardsDisplay();
 }
-function checkWinner(userCards, computerCards) {
-    showAllCards = true;
+function checkWinner() {
+    endGame();
     let message;
     if (players[0].points === players[1].points) {
         message = "tie";
@@ -223,16 +247,28 @@ function checkWinner(userCards, computerCards) {
         message = "Computer won!";
     }
     document.querySelector('#resultTitle').textContent = message;
-    cardsDisplay(userCards, computerCards);
+    cardsDisplay();
 }
 
-function stand (deck, userCards, computerCards) {
+function stand () {
     while (players[1].points < 17) {
         const nextCard = deck.shift();
         players[1].hands.push(nextCard);
-        cardsDisplay(userCards, computerCards);
+        cardsDisplay();
     }
-    checkWinner(userCards, computerCards);
+    checkWinner();
+}
+function reset() {
+    startGame();
+    generateDeck(shuffle);
+    generatePlayers();
+    const cards = new Array();
+    for (let i = 0; i < 4; i++) {
+        const card = deck.shift();
+        cards.push(card.value);
+    }
+    dealHands(cards);
+    cardsDisplay();
 }
 // main.js
 function main() {

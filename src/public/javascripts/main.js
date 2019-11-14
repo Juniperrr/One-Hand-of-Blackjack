@@ -1,7 +1,3 @@
-// Referred to 
-// 'https://www.thatsoftwaredude.com/content/6417/how-to-code-blackjack-using-javascript'
-// in order to learn how to implement BlackJack game.
-// Code may resemble some parts of the learning material.
 
 const suits = ["S", "D", "C", "H"];
 const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
@@ -71,6 +67,8 @@ function updateScores() {
             players[p].points = sumScore; // gives total score if a player has a hand or more.
         }
     }
+    userTitle.textContent = 'User Hand - Total: '+ players[0].points;
+    computerTitle.textContent = 'Computer Hand - Total: ?';
 }
 
 // deal the hand (to me and compture) + pop and push if specified
@@ -96,15 +94,17 @@ function dealHands(startValues) {
             const card = deck[0];
             deck.shift(); 
             players[x].hands.push(card); 
-            // should render cards?
-            updateScores();
         }
     }
-    // should update deck?
 }
 
-function setImgAttribute(card, cardImg) {
-    cardImg.src = 'img/' + card.value + card.suit + ".png";
+function setImgAttribute(card, cardImg, what) {
+    if (what === 'display') {
+        cardImg.src = 'img/' + card.value + card.suit + ".png";
+    } 
+    else if (what === 'hide') {
+        cardImg.src = 'img/gray_back.png';
+    }
     cardImg.style.width = "50px";
     cardImg.style.height = "80px";
 }
@@ -118,7 +118,7 @@ function cardsDisplay(userCards, computerCards) {
                 card = players[0].hands[h];
                 cardImg = document.createElement('img');
                 if (card && card.value) {
-                    setImgAttribute(card, cardImg);
+                    setImgAttribute(card, cardImg, 'display');
                 }
                 // setImgAttribute(card, cardImg);
                 userCards.appendChild(cardImg);
@@ -126,22 +126,25 @@ function cardsDisplay(userCards, computerCards) {
             document.querySelector('#userTitle').textContent = 'User Hand - total + ' + players[0].points;
         }
         else { // computer
-            for (let h = 0; h < players[1].hands.length; h++) {
-                card = players[1].hands[h];
-                cardImg = document.createElement('img');
-                if (card && card.value) {
-                    setImgAttribute(card, cardImg);
-                }
-                // setImgAttribute(card, cardImg);
-                computerCards.appendChild(cardImg);
+            const card1 = players[1].hands[0];
+            const cardImg1 = document.createElement('img');
+            if (card1 && card1.value) {
+                setImgAttribute(card1, cardImg1, 'display');
             }
+            computerCards.appendChild(cardImg1);
+            const card2 = players[1].hands[1];
+            const cardImg2 = document.createElement('img');
+            if (card2 && card2.value) {
+                setImgAttribute(card2, cardImg2, 'hide');
+            }
+            computerCards.appendChild(cardImg2);
             document.querySelector('#computerTitle').textContent = 'Computer Hand - total + ' + players[1].points;
         }
     }
 }
 
 // Display user name/scores, cards, hit/stand
-function gameInterface () {
+function gameInterface (startValues) {
     const gameDiv = document.querySelector('div[class=game]');
 
 	const userDiv = document.createElement('div');
@@ -179,47 +182,28 @@ function gameInterface () {
     gameDiv.appendChild(bottomBlock);
     
     // firstR(c,p,cardList,pCards,cCards);
-    updateScores();
     cardsDisplay(userCards, computerCards);
-    userTitle.textContent = 'User Hand - Total: '+ players[0].points;
-	computerTitle.textContent = 'Computer Hand - Total: ?';
-	// hitBtn.onclick = ()=>hit(deck,p,pCards,pTotal,pTitle);
-	// standBtn.onclick = ()=>stand(cardList,cCards,cTotal,cTitle);
+    hitBtn.onclick = () => hit(deck, userCards, computerCards, userTitle);
+	standBtn.onclick = () => stand(startValues, computerCards, computerTitle);
 	// if(total(p,'p')===21){
 	// 	gameOver();
 	// }
-//----------------------------------------------
-    /*
-    // display user name
-    for (let p = 0; players.length; p++) {
-        const divPlayer = document.createElement('div'); // name, score, cards
-
-        const playerName = players[p].name;
-        divPlayer.appendChild(playerName);
-        const playerScore = players[p].points;
-        divPlayer.appendChild(playerScore);
-        console.log('done');
-        const numHands = players[p].hands.length;
-        const playerHand2ndLast = players[p].hands[numHands-2];
-        const playerHandLast = players[p].hands[numHands-1];
-        const playerCard1 = document.createElement("playerCard1"); // displays the 2nd latest
-        setImgAttribute(playerCard1);
-        divPlayer.appendChild(playerCard1);
-        const playerCard2 = document.createElement("playerCard1"); // displays the latest 
-        setImgAttribute(playerCard2);
-        divPlayer.appendChild(playerCard2);
-
-        const currDiv = document.getElementById("cdiv1");
-        document.body.insertBefore(divPlayer, currDiv);
-    }
-    */
 }
 
+function hit (deck, userCards, computerCards, userTitle) {
+    console.log('clicked hit');
+    const nextCard = deck.shift();
+    players[0].hands.push(nextCard);
+    cardsDisplay(userCards, computerCards);
 
-
+}
+function stand (deck, userCards, userTitle) {
+    console.log('clicked stand');
+}
 // main.js
 function main() {
     const btn = document.querySelector('.playBtn');
+    
     const startForm = document.querySelector(".start");
     // form disappears when the submit button is clicked
     btn.addEventListener('click', function(evt) {
@@ -230,21 +214,9 @@ function main() {
         generateDeck(shuffle);
         generatePlayers();
         dealHands(startValues);
-        gameInterface();
+        gameInterface(startValues);
     });
     // 1
+    
 }
 document.addEventListener('DOMContentLoaded', main); 
-
-module.exports = {
-    main: main,
-    generateDeck: generateDeck,
-    shuffle: shuffle,
-    generatePlayers: generatePlayers,
-    dealHands: dealHands,
-    updateScores: updateScores,
-    gameInterface: gameInterface,
-    setImgAttribute: setImgAttribute,
-    cardsDisplay: cardsDisplay,
-    // displayInitialUI: displayInitialUI,
-  };

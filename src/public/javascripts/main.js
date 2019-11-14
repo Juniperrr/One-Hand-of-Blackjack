@@ -103,27 +103,6 @@ function dealHands(startValues) {
     // should update deck?
 }
 
-function cardsDisplay(userCards, computerCards) {
-    for (let p = 0; p < players.length; p++) {
-        if (p === 0) {
-            for (let h = 0; players[0].hands.length; h++) {
-                const card = players[0].hands[h];
-                const cardImg = document.createElement('img');
-                cardImg.src = './public/img/' + card.value + card.suit + ".png";
-                userCards.appendChild(cardImg);
-            }
-        }
-        else {
-            for (let h = 0; players[1].hands.length; h++) {
-                const card = players[1].hands[h];
-                const cardImg = document.createElement('img');
-                cardImg.src = './public/img/' + card.value + card.suit + ".png";
-                computerCards.appendChild(cardImg);
-            }
-        }
-    }
-}
-
 // Display user name/scores, cards, hit/stand
 function gameInterface () {
     const gameDiv = document.querySelector('div[class=game]');
@@ -163,8 +142,8 @@ function gameInterface () {
     gameDiv.appendChild(bottomBlock);
     
     // firstR(c,p,cardList,pCards,cCards);
-    cardsDisplay(userCards, computerCards);
     updateScores();
+    cardsDisplay(userCards, computerCards);
     userTitle.textContent = 'Player Hand - Total: '+ players[0].points;
 	computerTitle.textContent = 'Computer Hand - Total: ?';
 	// hitBtn.onclick = ()=>hit(deck,p,pCards,pTotal,pTitle);
@@ -198,6 +177,31 @@ function gameInterface () {
     }
     */
 }
+function cardsDisplay(userCards, computerCards) {
+    for (let p = 0; p < players.length; p++) {
+        let card;
+        let cardImg;
+        if (p === 0) { // user
+            for (let h = 0; players[0].hands.length; h++) {
+                card = players[0].hands[h];
+                cardImg = document.createElement('img');
+                cardImg.src = './public/img/' + card.value + card.suit + ".png";
+                userCards.appendChild(cardImg);
+            }
+            document.querySelector('#userTitle').textContent = 'User Hand - total + ' + players[0].points;
+        }
+        else { // computer
+            for (let h = 0; players[1].hands.length; h++) {
+                card = players[1].hands[h];
+                cardImg = document.createElement('img');
+                cardImg.src = './public/img/' + card.value + card.suit + ".png";
+                computerCards.appendChild(cardImg);
+            }
+            document.querySelector('#computerTitle').textContent = 'Computer Hand - total + ' + players[1].points;
+        }
+    }
+}
+
 
 // main.js
 function main() {
@@ -212,7 +216,7 @@ function main() {
         generateDeck(shuffle);
         generatePlayers();
         dealHands(startValues);
-        // displayInitialUI();
+        gameInterface();
     });
     // 1
     // dealHands(startValues);

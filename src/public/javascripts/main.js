@@ -10,17 +10,7 @@ function generateDeck(callback) {
     deck = new Array();
     for(let i = 0; i < suits.length; i++) { // 4
 		for(let x = 0; x < values.length; x++) { // 13
-            let pnt;
-            if (values[i] === "A") {
-                pnt = 11; // or 1.
-            }
-            else if (values[i] === "J" || values[i] === "Q" || values[i] === "K") {
-                pnt = 10;
-            }
-            else {
-                pnt = parseInt(values[i]);
-            }
-            const card = { suit: suits[i], value: values[x], point: pnt };
+            const card = { suit: suits[i], value: values[x]};
             deck.push(card);
 		}
     }
@@ -58,14 +48,28 @@ function generatePlayers() {
 function updateScores() {
     for (let p = 0; p < players.length; p++) {
         let sumScore = 0;
-        for (let h = 0; h < players[p].hands.length; h++) {
-            const currHand = players[p].hands[h];
-            if (currHand.value === "A" && sumScore + currHand.point > 21) {
-                currHand.point = 1;
+        for (let c = 0; c < players[p].hands.length; c++) {
+            const currCard = players[p].hands[c];
+            let pnt;
+            if (currCard.value === "J" || currCard.value === "Q" || currCard.value === "K") {
+                pnt = 10;
             }
-            sumScore += currHand.point;
-            players[p].points = sumScore; // gives total score if a player has a hand or more.
+            else {
+                pnt = parseInt(currCard.value);
+            }
+            sumScore += pnt;    
         }
+        for (let c = 0; c < players[p].hands.length; c++) {
+            const currCard = players[p].hands[c];
+            if (currCard.value === "A") {
+                if (sumScore + 11 > 21) {
+                    sumScore += 1;
+                } else {
+                    sumScore += 11;
+                }  
+            }
+        }
+        players[p].points = sumScore; // gives total score if a player has a hand or more.
     }
     document.querySelector('#userTitle').textContent = 'User Hand - total ' + players[0].points;
     document.querySelector('#computerTitle').textContent = 'Computer Hand - total ?';
@@ -75,17 +79,7 @@ function updateScores() {
 function dealHands(startValues) {
     // push the specified cards to the front
     for (let i = startValues.length-1; i >= 0; i--) {
-        let startPoint;
-        if (startValues[i] === "A") {
-            startPoint = 11; // or 1.
-        }
-        else if (startValues[i] === "J" || startValues[i] === "Q" || startValues[i] === "K") {
-            startPoint = 10;
-        }
-        else {
-            startPoint = parseInt(startValues[i]);
-        }
-        const startCard = { suit: "H", value: startValues[i], point: startPoint };
+        const startCard = { suit: "H", value: startValues[i]};
         deck.unshift(startCard); //1,2,3,4,5,6,7
     }
     // deal hands to the 2 players

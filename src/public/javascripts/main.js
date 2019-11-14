@@ -67,8 +67,8 @@ function updateScores() {
             players[p].points = sumScore; // gives total score if a player has a hand or more.
         }
     }
-    userTitle.textContent = 'User Hand - Total: '+ players[0].points;
-    computerTitle.textContent = 'Computer Hand - Total: ?';
+    document.querySelector('#userTitle').textContent = 'User Hand - total ' + players[0].points;
+    document.querySelector('#computerTitle').textContent = 'Computer Hand - total ?';
 }
 
 // deal the hand (to me and compture) + pop and push if specified
@@ -110,6 +110,10 @@ function setImgAttribute(card, cardImg, what) {
 }
 
 function cardsDisplay(userCards, computerCards) {
+
+    updateScores();
+    userCards.innerHTML = "";
+    computerCards.innerHTML = "";
     for (let p = 0; p < players.length; p++) {
         let card;
         let cardImg;
@@ -123,7 +127,7 @@ function cardsDisplay(userCards, computerCards) {
                 // setImgAttribute(card, cardImg);
                 userCards.appendChild(cardImg);
             }
-            document.querySelector('#userTitle').textContent = 'User Hand - total + ' + players[0].points;
+            
         }
         else { // computer
             const card1 = players[1].hands[0];
@@ -138,7 +142,7 @@ function cardsDisplay(userCards, computerCards) {
                 setImgAttribute(card2, cardImg2, 'hide');
             }
             computerCards.appendChild(cardImg2);
-            document.querySelector('#computerTitle').textContent = 'Computer Hand - total + ' + players[1].points;
+            
         }
     }
 }

@@ -108,26 +108,38 @@ function setImgAttribute(card, cardImg) {
     cardImg.style.width = "50px";
     cardImg.style.height = "80px";
 }
+
 function cardsDisplay(userCards, computerCards) {
     for (let p = 0; p < players.length; p++) {
+        console.log('how many p', players.length);
+        console.log('which player', p);
         let card;
         let cardImg;
         if (p === 0) { // user
-            for (let h = 0; players[0].hands.length; h++) {
+            for (let h = 0; h < players[0].hands.length; h++) {
+                console.log('how many user cards', players[0].hands.length);
                 card = players[0].hands[h];
                 cardImg = document.createElement('img');
-                setImgAttribute(card, cardImg);
-                // cardImg.src = 'img/' + card.value + card.suit + ".png";
+                if (card && card.value) {
+                    console.log('yo');
+                    setImgAttribute(card, cardImg);
+                }
+                // setImgAttribute(card, cardImg);
                 userCards.appendChild(cardImg);
             }
             document.querySelector('#userTitle').textContent = 'User Hand - total + ' + players[0].points;
+            console.log('passed here?');
         }
         else { // computer
-            for (let h = 0; players[1].hands.length; h++) {
+            for (let h = 0; h < players[1].hands.length; h++) {
+                console.log('how many cpu cards', players[1].hands.length);
                 card = players[1].hands[h];
                 cardImg = document.createElement('img');
-                setImgAttribute(card, cardImg);
-                // cardImg.src = 'img/' + card.value + card.suit + ".png";
+                if (card && card.value) {
+                    console.log('yo');
+                    setImgAttribute(card, cardImg);
+                }
+                // setImgAttribute(card, cardImg);
                 computerCards.appendChild(cardImg);
             }
             document.querySelector('#computerTitle').textContent = 'Computer Hand - total + ' + players[1].points;

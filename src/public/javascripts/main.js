@@ -45,35 +45,12 @@ function generatePlayers() {
     };
     players.push(computer);
 }
-function updateScores(scores) {
-    console.log('updatesocres');
-    const scoresDiv = document.querySelector('#scoresDiv');
-    scoresDiv.innerHTML = "";
-    for (const score of scores) {
-        const span = document.createElement('span');
-        span.innerText = score.initials + " " + score.userScore + " - " + score.computerScore;
-        scoresDiv.appendChild(span);
-    }
-}
+
 function endGame(){
     showAllCards = true;
     document.querySelector('#bb').style.display = "none";
-    document.querySelector('#resetBlock').style.display = "block";
-    const xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = () => {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            const scores = JSON.parse(xhr.responseText);
-            const scoresDiv = document.querySelector('#scoresDiv');
-            scoresDiv.innerHTML = "";
-            for (const score of scores) {
-                const div = document.createElement('div');
-                div.innerText = score.initials + " " + score.userScore + " - " + score.computerScore;
-                scoresDiv.appendChild(div);
-            }
-        }
-    };
-    xhr.open('GET', '/scores', true);
-    xhr.send(null);
+    document.querySelector('#saveDiv').style.display = "block";
+    
 }
 
 function startGame(){
@@ -81,6 +58,7 @@ function startGame(){
     document.querySelector('#bb').style.display = "block";
     document.querySelector('#resetBlock').style.display = "none";
     document.querySelector('#resultTitle').textContent = "";
+    document.querySelector('#scoresDiv').style.display = "none";
 }
 
 function checkBust() {
@@ -237,16 +215,20 @@ function gameInterface (startValues) {
     const resetBtn = document.createElement('button');	
     resetBtn.id='resetBtn';
     resetBtn.textContent = 'RESET';
-    
     resetBlock.appendChild(resetBtn);
     resetBlock.style.display = "none";
+    
+    const saveDiv = document.createElement('div');
+    saveDiv.id = 'saveDiv';
+    saveDiv.style.display = "none";
     const initialsInput = document.createElement('input');
     initialsInput.placeholder = "enter initials";
     initialsInput.id = "initialsInput";
-    resetBlock.appendChild(initialsInput);
+    saveDiv.appendChild(initialsInput);
     const saveBtn = document.createElement('button');
     saveBtn.textContent = 'SAVE';
-    resetBlock.appendChild(saveBtn);
+    saveDiv.appendChild(saveBtn);
+
     const scoresDiv = document.createElement('div');
     scoresDiv.id = 'scoresDiv';
 
@@ -255,6 +237,7 @@ function gameInterface (startValues) {
     gameDiv.appendChild(bottomBlock);
     gameDiv.appendChild(resultBlock);
     gameDiv.appendChild(resetBlock);
+    gameDiv.appendChild(saveDiv);
     gameDiv.appendChild(scoresDiv);
     
     // firstR(c,p,cardList,pCards,cCards);
@@ -306,7 +289,7 @@ function reset() {
     dealHands(cards);
     cardsDisplay();
 }
-function save () {
+function save() {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", '/save', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -315,6 +298,24 @@ function save () {
         userScore: players[0].points,
         computerScore: players[1].points,
     }));
+    const xhr2 = new XMLHttpRequest();
+    xhr2.onreadystatechange = () => {
+        if (xhr2.readyState === XMLHttpRequest.DONE) {
+            const scores = JSON.parse(xhr2.responseText);
+            const scoresDiv = document.querySelector('#scoresDiv');
+            scoresDiv.innerHTML = "";
+            for (const score of scores) {
+                const div = document.createElement('div');
+                div.innerText = score.initials + " " + score.userScore + " - " + score.computerScore;
+                scoresDiv.appendChild(div);
+            }
+            document.querySelector('#scoresDiv').style.display = "block";
+            document.querySelector('#saveDiv').style.display = "none";
+            document.querySelector('#resetBlock').style.display = "block";
+        }
+    };
+    xhr2.open('GET', '/scores', true);
+    xhr2.send(null);
 }
 
 // main.js

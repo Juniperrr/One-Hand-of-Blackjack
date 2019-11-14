@@ -47,6 +47,7 @@ function generatePlayers() {
 
 function updateScores() {
     for (let p = 0; p < players.length; p++) {
+        let numAces = 0;
         let sumScore = 0;
         for (let c = 0; c < players[p].hands.length; c++) {
             const currCard = players[p].hands[c];
@@ -55,23 +56,20 @@ function updateScores() {
                 pnt = 10;
             }
             else if (currCard.value === "A") {
-                pnt = 0;
+                numAces++;
+                pnt = 1;
             }
             else {
                 pnt = parseInt(currCard.value);
             }
             sumScore += pnt;    
         }
-        for (let c = 0; c < players[p].hands.length; c++) {
-            const currCard = players[p].hands[c];
-            if (currCard.value === "A") {
-                if (sumScore + 11 > 21) {
-                    sumScore += 1;
-                } else {
-                    sumScore += 11;
-                }  
+        for (let a = 0; a < numAces; a++) {
+            if (sumScore + 10 < 21) {
+                sumScore += 10;
             }
         }
+        
         players[p].points = sumScore; // gives total score if a player has a hand or more.
     }
     document.querySelector('#userTitle').textContent = 'User Hand - total ' + players[0].points;
@@ -190,7 +188,7 @@ function gameInterface (startValues) {
     
     // firstR(c,p,cardList,pCards,cCards);
     cardsDisplay(userCards, computerCards);
-    hitBtn.onclick = () => hit(deck, userCards, computerCards, userTitle);
+    hitBtn.onclick = () => hit(deck, userCards, computerCards);
 	standBtn.onclick = () => stand(startValues, computerCards, computerTitle);
 	// if(total(p,'p')===21){
 	// 	gameOver();
@@ -208,7 +206,7 @@ function checkBust() {
         }
     }
 }
-function hit (deck, userCards, computerCards, userTitle) {
+function hit (deck, userCards, computerCards) {
     console.log('clicked hit');
     const nextCard = deck.shift();
     players[0].hands.push(nextCard);

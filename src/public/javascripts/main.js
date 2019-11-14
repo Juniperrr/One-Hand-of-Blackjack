@@ -177,6 +177,11 @@ function gameInterface () {
     }
     */
 }
+function setImgAttribute(card, cardImg) {
+    cardImg.src = 'img/' + card.value + card.suit + ".png";
+    cardImg.style.width = "50px";
+    cardImg.style.height = "80px";
+}
 function cardsDisplay(userCards, computerCards) {
     for (let p = 0; p < players.length; p++) {
         let card;
@@ -185,7 +190,8 @@ function cardsDisplay(userCards, computerCards) {
             for (let h = 0; players[0].hands.length; h++) {
                 card = players[0].hands[h];
                 cardImg = document.createElement('img');
-                cardImg.src = 'img/' + card.value + card.suit + ".png";
+                setImgAttribute(card, cardImg);
+                // cardImg.src = 'img/' + card.value + card.suit + ".png";
                 userCards.appendChild(cardImg);
             }
             document.querySelector('#userTitle').textContent = 'User Hand - total + ' + players[0].points;
@@ -194,7 +200,8 @@ function cardsDisplay(userCards, computerCards) {
             for (let h = 0; players[1].hands.length; h++) {
                 card = players[1].hands[h];
                 cardImg = document.createElement('img');
-                cardImg.src = 'img/' + card.value + card.suit + ".png";
+                setImgAttribute(card, cardImg);
+                // cardImg.src = 'img/' + card.value + card.suit + ".png";
                 computerCards.appendChild(cardImg);
             }
             document.querySelector('#computerTitle').textContent = 'Computer Hand - total + ' + players[1].points;

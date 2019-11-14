@@ -238,6 +238,7 @@ module.exports = {
     dealHands: dealHands,
     updateScores: updateScores,
     gameInterface: gameInterface,
+    setImgAttribute: setImgAttribute,
     cardsDisplay: cardsDisplay,
     // displayInitialUI: displayInitialUI,
   };

@@ -1,4 +1,4 @@
-
+let showAllCards = false;
 const suits = ["S", "D", "C", "H"];
 const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
 let deck = new Array();
@@ -73,7 +73,11 @@ function updateScores() {
         players[p].points = sumScore; // gives total score if a player has a hand or more.
     }
     document.querySelector('#userTitle').textContent = 'User Hand - total ' + players[0].points;
-    document.querySelector('#computerTitle').textContent = 'Computer Hand - total ?';
+    let score = '?';
+    if (showAllCards) {
+        score = players[1].points;
+    }
+    document.querySelector('#computerTitle').textContent = 'Computer Hand - total ' + score;
 }
 
 // deal the hand (to me and compture) + pop and push if specified
@@ -104,40 +108,46 @@ function setImgAttribute(card, cardImg, what) {
     cardImg.style.height = "80px";
 }
 
-function cardsDisplay(userCards, computerCards) {
+function checkBust() {
+    for (let p = 0; p < players.length; p++) {
+        if (players[p].points > 21) {
+            if (p === 0) {
+                document.querySelector('#resultTitle').textContent = "Player lost (bust)!";
+            } else {
+                document.querySelector('#resultTitle').textContent = "Computer lost (bust)!";
+            }
+            showAllCards = true;
+        }
+    }
+}
 
+function cardsDisplay(userCards, computerCards) {
     updateScores();
+    checkBust();
     userCards.innerHTML = "";
     computerCards.innerHTML = "";
     for (let p = 0; p < players.length; p++) {
         let card;
         let cardImg;
-        if (p === 0) { // user
-            for (let h = 0; h < players[0].hands.length; h++) {
-                card = players[0].hands[h];
-                cardImg = document.createElement('img');
-                if (card && card.value) {
-                    setImgAttribute(card, cardImg, 'display');
-                }
-                // setImgAttribute(card, cardImg);
-                userCards.appendChild(cardImg);
-            }
-            
+        let cardDiv;
+        if (p === 0) {
+            cardDiv = userCards;
         }
-        else { // computer
-            const card1 = players[1].hands[0];
-            const cardImg1 = document.createElement('img');
-            if (card1 && card1.value) {
-                setImgAttribute(card1, cardImg1, 'display');
+        else {
+            cardDiv = computerCards;
+        }
+        for (let h = 0; h < players[p].hands.length; h++) {
+            card = players[p].hands[h];
+            cardImg = document.createElement('img');
+            if (card && card.value) {
+                let display = 'display';
+                if (p === 1 && h > 0 && !showAllCards) {
+                    display = 'hide';
+                }
+                setImgAttribute(card, cardImg, display);
             }
-            computerCards.appendChild(cardImg1);
-            const card2 = players[1].hands[1];
-            const cardImg2 = document.createElement('img');
-            if (card2 && card2.value) {
-                setImgAttribute(card2, cardImg2, 'hide');
-            }
-            computerCards.appendChild(cardImg2);
-            
+            // setImgAttribute(card, cardImg);
+            cardDiv.appendChild(cardImg);
         }
     }
 }
@@ -189,32 +199,40 @@ function gameInterface (startValues) {
     // firstR(c,p,cardList,pCards,cCards);
     cardsDisplay(userCards, computerCards);
     hitBtn.onclick = () => hit(deck, userCards, computerCards);
-	standBtn.onclick = () => stand(startValues, computerCards, computerTitle);
+	standBtn.onclick = () => stand(deck, userCards, computerCards);
 	// if(total(p,'p')===21){
 	// 	gameOver();
 	// }
 }
 
-function checkBust() {
-    for (let p = 0; p < players.length; p++) {
-        if (players[p].points > 21) {
-            if (p === 0) {
-                document.querySelector('#resultTitle').textContent = "Player lost (bust)!";
-            } else {
-                document.querySelector('#resultTitle').textContent = "Computer lost (bust)!";
-            }
-        }
-    }
-}
 function hit (deck, userCards, computerCards) {
-    console.log('clicked hit');
     const nextCard = deck.shift();
     players[0].hands.push(nextCard);
     cardsDisplay(userCards, computerCards);
-    checkBust();
 }
-function stand (deck, userCards, userTitle) {
-    console.log('clicked stand');
+function checkWinner(userCards, computerCards) {
+    showAllCards = true;
+    let message;
+    if (players[0].points === players[1].points) {
+        message = "tie";
+    }
+    else if (players[0].points > players[1].points) {
+        message = "Player won!";
+
+    } else {
+        message = "Computer won!";
+    }
+    document.querySelector('#resultTitle').textContent = message;
+    cardsDisplay(userCards, computerCards);
+}
+
+function stand (deck, userCards, computerCards) {
+    while (players[1].points < 17) {
+        const nextCard = deck.shift();
+        players[1].hands.push(nextCard);
+        cardsDisplay(userCards, computerCards);
+    }
+    checkWinner(userCards, computerCards);
 }
 // main.js
 function main() {

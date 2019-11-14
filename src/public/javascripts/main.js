@@ -87,7 +87,7 @@ function dealHands(startValues) {
         else {
             startPoint = parseInt(startValues[i]);
         }
-        const startCard = { suit: "hearts", value: startValues[i], point: startPoint };
+        const startCard = { suit: "H", value: startValues[i], point: startPoint };
         deck.unshift(startCard); //1,2,3,4,5,6,7
     }
     // deal hands to the 2 players
@@ -185,7 +185,7 @@ function cardsDisplay(userCards, computerCards) {
             for (let h = 0; players[0].hands.length; h++) {
                 card = players[0].hands[h];
                 cardImg = document.createElement('img');
-                cardImg.src = './public/img/' + card.value + card.suit + ".png";
+                cardImg.src = '/public/img/' + card.value + card.suit + ".png";
                 userCards.appendChild(cardImg);
             }
             document.querySelector('#userTitle').textContent = 'User Hand - total + ' + players[0].points;
@@ -194,7 +194,7 @@ function cardsDisplay(userCards, computerCards) {
             for (let h = 0; players[1].hands.length; h++) {
                 card = players[1].hands[h];
                 cardImg = document.createElement('img');
-                cardImg.src = './public/img/' + card.value + card.suit + ".png";
+                cardImg.src = '/public/img/' + card.value + card.suit + ".png";
                 computerCards.appendChild(cardImg);
             }
             document.querySelector('#computerTitle').textContent = 'Computer Hand - total + ' + players[1].points;

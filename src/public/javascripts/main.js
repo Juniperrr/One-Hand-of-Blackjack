@@ -54,6 +54,9 @@ function updateScores() {
             if (currCard.value === "J" || currCard.value === "Q" || currCard.value === "K") {
                 pnt = 10;
             }
+            else if (currCard.value === "A") {
+                pnt = 0;
+            }
             else {
                 pnt = parseInt(currCard.value);
             }
@@ -165,7 +168,7 @@ function gameInterface (startValues) {
 
     const hitBtn = document.createElement('button');
 	const standBtn = document.createElement('button');
-	const bottomBlock = document.createElement('div');
+    const bottomBlock = document.createElement('div');
 	hitBtn.id='hitBtn';
 	standBtn.id='standBtn';
     bottomBlock.id='bb';
@@ -175,9 +178,15 @@ function gameInterface (startValues) {
     hitBtn.textContent = 'HIT';
     standBtn.textContent = 'STAND';
     
+    const resultBlock = document.createElement('div');
+    const resultTitle = document.createElement('h3');	
+    resultTitle.id='resultTitle';
+    resultBlock.appendChild(resultTitle);
+    
     gameDiv.appendChild(userDiv);
     gameDiv.appendChild(computerDiv);
     gameDiv.appendChild(bottomBlock);
+    gameDiv.appendChild(resultBlock);
     
     // firstR(c,p,cardList,pCards,cCards);
     cardsDisplay(userCards, computerCards);
@@ -188,12 +197,23 @@ function gameInterface (startValues) {
 	// }
 }
 
+function checkBust() {
+    for (let p = 0; p < players.length; p++) {
+        if (players[p].points > 21) {
+            if (p === 0) {
+                document.querySelector('#resultTitle').textContent = "Player lost (bust)!";
+            } else {
+                document.querySelector('#resultTitle').textContent = "Computer lost (bust)!";
+            }
+        }
+    }
+}
 function hit (deck, userCards, computerCards, userTitle) {
     console.log('clicked hit');
     const nextCard = deck.shift();
     players[0].hands.push(nextCard);
     cardsDisplay(userCards, computerCards);
-
+    checkBust();
 }
 function stand (deck, userCards, userTitle) {
     console.log('clicked stand');

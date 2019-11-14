@@ -45,10 +45,35 @@ function generatePlayers() {
     };
     players.push(computer);
 }
+function updateScores(scores) {
+    console.log('updatesocres');
+    const scoresDiv = document.querySelector('#scoresDiv');
+    scoresDiv.innerHTML = "";
+    for (const score of scores) {
+        const span = document.createElement('span');
+        span.innerText = score.initials + " " + score.userScore + " - " + score.computerScore;
+        scoresDiv.appendChild(span);
+    }
+}
 function endGame(){
     showAllCards = true;
     document.querySelector('#bb').style.display = "none";
     document.querySelector('#resetBlock').style.display = "block";
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            const scores = JSON.parse(xhr.responseText);
+            const scoresDiv = document.querySelector('#scoresDiv');
+            scoresDiv.innerHTML = "";
+            for (const score of scores) {
+                const div = document.createElement('div');
+                div.innerText = score.initials + " " + score.userScore + " - " + score.computerScore;
+                scoresDiv.appendChild(div);
+            }
+        }
+    };
+    xhr.open('GET', '/scores', true);
+    xhr.send(null);
 }
 
 function startGame(){
@@ -215,18 +240,29 @@ function gameInterface (startValues) {
     
     resetBlock.appendChild(resetBtn);
     resetBlock.style.display = "none";
+    const initialsInput = document.createElement('input');
+    initialsInput.placeholder = "enter initials";
+    initialsInput.id = "initialsInput";
+    resetBlock.appendChild(initialsInput);
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = 'SAVE';
+    resetBlock.appendChild(saveBtn);
+    const scoresDiv = document.createElement('div');
+    scoresDiv.id = 'scoresDiv';
 
     gameDiv.appendChild(userDiv);
     gameDiv.appendChild(computerDiv);
     gameDiv.appendChild(bottomBlock);
     gameDiv.appendChild(resultBlock);
     gameDiv.appendChild(resetBlock);
+    gameDiv.appendChild(scoresDiv);
     
     // firstR(c,p,cardList,pCards,cCards);
     cardsDisplay();
     hitBtn.onclick = () => hit();
     standBtn.onclick = () => stand();
     resetBtn.onclick = () => reset();
+    saveBtn.onclick = () => save();
 }
 
 function hit () {
@@ -270,6 +306,17 @@ function reset() {
     dealHands(cards);
     cardsDisplay();
 }
+function save () {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", '/save', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({
+        initials: document.querySelector('#initialsInput').value,
+        userScore: players[0].points,
+        computerScore: players[1].points,
+    }));
+}
+
 // main.js
 function main() {
     const btn = document.querySelector('.playBtn');

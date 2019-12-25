@@ -1,0 +1,19 @@
+{
+  "name": "juniperrr-homework06",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nyu-csci-ua-0480-001-fall-2019/Juniperrr-homework06.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nyu-csci-ua-0480-001-fall-2019/Juniperrr-homework06/issues"
+  },
+  "homepage": "https://github.com/nyu-csci-ua-0480-001-fall-2019/Juniperrr-homework06#readme"
+}
